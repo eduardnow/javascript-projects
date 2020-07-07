@@ -7,23 +7,42 @@ let pieRepo = require('./repos/pieRepo');
 let router = express.Router();
 
 // Create GET to return a list of all pies
-router.get('/', function(req, res, next) {
-    pieRepo.get(function(data) {
+router.get('/', function (req, res, next) {
+    pieRepo.get(function (data) {
         res.status(200).json({
             'status': 200,
             'statusText': 'OK',
             'message': 'All pies retrieved',
             'data': data
         });
-    }, function(err) {
+    }, function (err) {
         next(err);
     });
 });
 
-// Create GET to return a list of all pies
-router.get('/:id', function(req, res, next) {
-    pieRepo.getById(req.params.id, function(data) {
-        if(data) {
+// Create GET/search?id=n&name=str to search for pies by 'id' and/or 'name'
+router.get('/search', function (req, res, next) {
+    let searchObject = {
+        "id": req.query.id,
+        "name": req.query.name
+    };
+
+    pieRepo.search(searchObject, function (data) {
+        res.status(200).json({
+            "status": 200,
+            "statusText": "OK",
+            "message": "All pies retrieved.",
+            "data": data
+        });
+    }, function (err) {
+        next(err);
+    });
+});
+
+// Create GET /id to return a single pies
+router.get('/:id', function (req, res, next) {
+    pieRepo.getById(req.params.id, function (data) {
+        if (data) {
             res.status(200).json({
                 'status': 200,
                 'statusText': 'OK',
@@ -41,7 +60,7 @@ router.get('/:id', function(req, res, next) {
                 'message': 'The pie ' + req.params.id + ' could not be found',
             }
         });
-    }, function(err) {
+    }, function (err) {
         next(err);
     });
 });
@@ -50,6 +69,6 @@ router.get('/:id', function(req, res, next) {
 app.use('/api/', router);
 
 // Create server to listen on port 5000
-var server = app.listen(5000, function() {
+var server = app.listen(5000, function () {
     console.log('Node server is running on http://localhost:5000');
 });
