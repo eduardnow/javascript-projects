@@ -6,6 +6,9 @@ let pieRepo = require('./repos/pieRepo');
 // Use the express Router object
 let router = express.Router();
 
+// Configure middleware to support JSON data parsing in request object
+app.use(express.json());
+
 // Create GET to return a list of all pies
 router.get('/', function (req, res, next) {
     pieRepo.get(function (data) {
@@ -59,6 +62,20 @@ router.get('/:id', function (req, res, next) {
                 'code': 'NOT_FOUND',
                 'message': 'The pie ' + req.params.id + ' could not be found',
             }
+        });
+    }, function (err) {
+        next(err);
+    });
+});
+
+// Create POST new pie
+router.post('/', function (req, res, next) {
+    pieRepo.insert(req.body, function (data) {
+        res.status(201).json({
+            'status': 201,
+            'statusText': 'CREATED',
+            'message': 'New Pie Added',
+            'data': data
         });
     }, function (err) {
         next(err);
