@@ -68,6 +68,34 @@ router.get('/:id', function (req, res, next) {
     });
 });
 
+// Create PUT /id update pie
+router.put('/:id', function (req, res, next) {
+    pieRepo.getById(req.params.id, function (data) {
+        if (data) {
+            pieRepo.update(req.body, req.params.id, function(data) {
+                res.status(200).json({
+                    'status': 200,
+                    'statusText': 'OK',
+                    'message': 'Pie ' + req.params.id + ' updated',
+                    'data': data
+                });
+            })
+        } else {
+            res.status(404).json({
+                'status': 404,
+                'statusText': 'Not Found',
+                'message': 'The pie ' + req.params.id + ' could not be found',
+                'error': {
+                    'code': 'NOT_FOUND',
+                    'message': 'The pie ' + req.params.id + ' could not be found',
+                }
+            });
+        }
+    }, function (err) {
+        next(err);
+    });
+});
+
 // Create POST new pie
 router.post('/', function (req, res, next) {
     pieRepo.insert(req.body, function (data) {
