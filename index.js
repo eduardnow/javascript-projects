@@ -13,7 +13,12 @@ let pies = [
 
 // Create GET to return a list of all pies
 router.get('/', function(req, res, next) {
-    res.status(200).send(pies);
+    res.status(200).json({
+        'status': 200,
+        'statusText': 'OK',
+        'message': 'All pies retrieved',
+        'data': pies
+    });
 });
 
 // Configure router so all routes are prefixed with /api/v1
